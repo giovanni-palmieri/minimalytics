@@ -2,6 +2,7 @@ package model
 
 import (
 	"log"
+	"os"
 	"time"
 )
 
@@ -31,7 +32,7 @@ func InitConfig() {
 
 	_, err = GetConfig("PORT")
 	if err != nil {
-		_, err = db.Exec("insert into config (key, value, createdOn) values (?, ?, ?)", "PORT", "3333", formattedTime)
+		_, err = db.Exec("insert into config (key, value, createdOn) values (?, ?, ?)", "PORT", GetEnvVariable("PORT", "3333"), formattedTime)
 
 		if err != nil {
 			log.Println(err)
@@ -40,14 +41,13 @@ func InitConfig() {
 
 	_, err = GetConfig("UI_ENABLE")
 	if err != nil {
-		_, err = db.Exec("insert into config (key, value, createdOn) values (?, ?, ?)", "UI_ENABLE", "1", formattedTime)
+		_, err = db.Exec("insert into config (key, value, createdOn) values (?, ?, ?)", "UI_ENABLE", GetEnvVariable("UI_ENABLE", "1"), formattedTime)
 
 		if err != nil {
 			log.Println(err)
 		}
 	}
 
-	return
 }
 
 func GetConfig(key string) (Config, error) {
@@ -68,4 +68,14 @@ func SetConfig(key string, val string) error {
 	_, err := db.Exec("update config set value = ? where key = ?", val, key)
 
 	return err
+}
+
+func GetEnvVariable(env string, placeholder string) string {
+	value, isPresent := os.LookupEnv(env)
+
+	if isPresent {
+		return value
+	} else {
+		return placeholder
+	}
 }
