@@ -2,9 +2,7 @@ FROM golang:1.24.1-alpine3.21
 
 RUN apk add --no-cache gcc musl-dev sqlite-dev
 
-ENV CGO_ENABLED=1 \
-  GOOS=linux \
-  GOARCH=arm64
+ENV CGO_ENABLED=1
 
 WORKDIR /app
 
